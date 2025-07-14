@@ -56,8 +56,8 @@ In order to add the new data to the webapp, there are two options:
 https://github.com/thuyptt/InnoLab-Adea
 
 ## Participants:
-#### Thuy Ngoc Phuong Ta
+#### Kommilitone A
 #### Thi Thuy Pham
-#### Luyang Chu
+#### Kommilitone B
 
 [![R-CMD-check](https://github.com/thuyptt/InnoLab-Adea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thuyptt/InnoLab-Adea/actions/workflows/R-CMD-check.yaml)
