@@ -1,0 +1,339 @@
+---
+title: "Examples to run"
+author: "Adea team"
+date: "2023-03-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Piecewise code of all the plots and tables in the shiny App
+
+This is an R Markdown document that contains all the important code parts of our project to recreate all the plots and tables using in our created web application. You can play around with the codes in this document to understand our whole coding project
+
+## Preparations
+
+```{r}
+source(file = "~/InnoLab-Adea/my_app/final_data_prep.R")
+temperatureColor <- "#E4C49D"
+priceColor <- "#823F54"
+```
+
+## Statistic
+
+### Figure 1.1: #new CM companies
+
+```{r}
+    x <- count_Year.Founded$Year.Founded
+    y <- count_Year.Founded$new
+    
+    ggplot(data = count_Year.Founded, aes_string(x = x, y = y))+  
+      geom_bar(stat="identity", fill=temperatureColor, alpha=.4) + 
+      #geom_text(aes(x, label=y), vjust=-0.3, size=3.5) + 
+      theme_classic() + 
+      labs(title = paste("Figure 1: Number of new cultured meat companies", ", by year founded", sep = ""), 
+           x = "Year founded", 
+           y = paste("Number of new cultured meat companies", sep = "")) +
+      theme(axis.text = element_text(size = 16)) +
+      theme(axis.title = element_text(size = 18)) +
+      theme(plot.title = element_text(size = 24)) 
+```
+
+### Figure 1.2: #total CM companies
+
+```{r}
+    x <- count_Year.Founded$Year.Founded
+    y <- count_Year.Founded$total
+    
+    ggplot(data = count_Year.Founded, aes_string(x = x, y = y))+  
+      geom_bar(stat="identity", fill=temperatureColor, alpha=.4) + 
+      #geom_text(aes(x, label=y), vjust=-0.3, size=3.5) + 
+      theme_classic() + 
+      labs(title = paste("Figure 1: Number of total cultured meat companies", ", by year founded", sep = ""), 
+           x = "Year founded", 
+           y = paste("Number of total cultured meat companies", sep = "")) +
+      theme(axis.text = element_text(size = 16)) +
+      theme(axis.title = element_text(size = 18)) +
+      theme(plot.title = element_text(size = 24)) 
+```
+
+### Figure 2: #new + total CM companies combined
+
+```{r}
+    x <- count_Year.Founded$Year.Founded
+    n <- count_Year.Founded$new
+    cum_n <- count_Year.Founded$total
+    coeff <- 4
+    
+    ggplot(count_Year.Founded, aes(x=x)) +
+      geom_bar(aes(y=n), stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4) + 
+      geom_line(aes(y=cum_n/coeff, group = 1), size=1, color=priceColor) + 
+      geom_point(aes(y=cum_n/coeff), size=2, color=priceColor) +
+      geom_text(aes(y=cum_n/coeff,label=cum_n), vjust=-1, size=7) +
+      geom_text(aes(y=n,label=n), vjust=-0.5, size=7) +
+      scale_y_continuous(
+        # Features of the first axis
+        name = "Number of new cultured meat companies",
+        # Add a second axis and specify its features
+        sec.axis = sec_axis(~.*coeff, name="Total number of cultured meat companies")
+      ) + 
+      theme_classic() +
+      theme(
+        axis.title.y = element_text(color = "#000000", size=18),
+        axis.title.y.right = element_text(color = priceColor, size=18)
+      ) +
+      labs(title = "Figure 2: New and Total number of cultured meat companies, \nby year founded", 
+           x = "Year") +
+      theme(axis.text = element_text(size = 16)) +
+      theme(axis.title = element_text(size = 18)) +
+      theme(plot.title = element_text(size = 24)) 
+```
+
+### Figure 3: Distribution of CM companies by selected variables
+
+#### 1. by country
+
+```{r}
+plot_varnumber <- which(sapply(plot_list, function(x) any(names(x) == "Country")))
+plot_vardata <- as.data.frame(plot_list[plot_varnumber])
+plots_var <- ggplot(plot_vardata, aes(x=reorder(plot_vardata[,1], + n), y=n))+  
+  geom_bar(stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4, width = 0.8, position = position_dodge(width = 1)) + 
+  geom_text(aes(label=n), hjust=-0.3, size=5) + # adding label text outside the bars
+  theme_classic() + 
+  coord_flip() +
+  labs(title = paste("Figure 3: Number of cultured meat companies by country", sep = ""), x = "Country", y = "Number of cultured meat companies") +
+  theme(axis.text = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 24)) 
+plots_var 
+
+```
+
+#### 2. by operating regions 
+
+```{r}
+plot_varnumber <- which(sapply(plot_list, function(x) any(names(x) == "Operating.Regions")))
+plot_vardata <- as.data.frame(plot_list[plot_varnumber])
+plots_var <- ggplot(plot_vardata, aes(x=reorder(plot_vardata[,1], + n), y=n))+  
+  geom_bar(stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4, width = 0.8, position = position_dodge(width = 1)) + 
+  geom_text(aes(label=n), hjust=-0.3, size=5) + # adding label text outside the bars
+  theme_classic() + 
+  coord_flip() +
+  labs(title = paste("Figure 3: Number of cultured meat companies by operating regions", sep = ""), x = "Operating regions", y = "Number of cultured meat companies") +
+  theme(axis.text = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 24)) 
+plots_var 
+```
+
+#### 3. by technology focus
+
+```{r}
+plot_varnumber <- which(sapply(plot_list, function(x) any(names(x) == "Technology.Focus")))
+plot_vardata <- as.data.frame(plot_list[plot_varnumber])
+plots_var <- ggplot(plot_vardata, aes(x=reorder(plot_vardata[,1], + n), y=n))+  
+  geom_bar(stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4, width = 0.8, position = position_dodge(width = 1)) + 
+  geom_text(aes(label=n), hjust=-0.3, size=5) + # adding label text outside the bars
+  theme_classic() + 
+  coord_flip() +
+  labs(title = paste("Figure 3: Number of cultured meat companies by technology focus", sep = ""), x = "Technology focus", y = "Number of cultured meat companies") +
+  theme(axis.text = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 24)) 
+plots_var 
+```
+
+#### 4. by protein category
+
+```{r}
+plot_varnumber <- which(sapply(plot_list, function(x) any(names(x) == "Protein.Category")))
+plot_vardata <- as.data.frame(plot_list[plot_varnumber])
+plots_var <- ggplot(plot_vardata, aes(x=reorder(plot_vardata[,1], + n), y=n))+  
+  geom_bar(stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4, width = 0.8, position = position_dodge(width = 1)) + 
+  geom_text(aes(label=n), hjust=-0.3, size=5) + # adding label text outside the bars
+  theme_classic() + 
+  coord_flip() +
+  labs(title = paste("Figure 3: Number of cultured meat companies by protein category", sep = ""), x = "Protein category", y = "Number of cultured meat companies") +
+  theme(axis.text = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 24)) 
+plots_var 
+```
+
+#### 5. by company focus
+
+```{r}
+plot_varnumber <- which(sapply(plot_list, function(x) any(names(x) == "Company.Focus")))
+plot_vardata <- as.data.frame(plot_list[plot_varnumber])
+plots_var <- ggplot(plot_vardata, aes(x=reorder(plot_vardata[,1], + n), y=n))+  
+  geom_bar(stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4, width = 0.8, position = position_dodge(width = 1)) + 
+  geom_text(aes(label=n), hjust=-0.3, size=5) + # adding label text outside the bars
+  theme_classic() + 
+  coord_flip() +
+  labs(title = paste("Figure 3: Number of cultured meat companies by company focus", sep = ""), x = "Company focus", y = "Number of cultured meat companies") +
+  theme(axis.text = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 24)) 
+plots_var 
+```
+
+#### 6. by product type
+
+```{r}
+plot_varnumber <- which(sapply(plot_list, function(x) any(names(x) == "Product.Type")))
+plot_vardata <- as.data.frame(plot_list[plot_varnumber])
+plots_var <- ggplot(plot_vardata, aes(x=reorder(plot_vardata[,1], + n), y=n))+  
+  geom_bar(stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4, width = 0.8, position = position_dodge(width = 1)) + 
+  geom_text(aes(label=n), hjust=-0.3, size=5) + # adding label text outside the bars
+  theme_classic() + 
+  coord_flip() +
+  labs(title = paste("Figure 3: Number of cultured meat companies by product type", sep = ""), x = "Product type", y = "Number of cultured meat companies") +
+  theme(axis.text = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 24)) 
+plots_var 
+```
+
+#### 7. by animal type analog
+
+```{r}
+plot_varnumber <- which(sapply(plot_list, function(x) any(names(x) == "Animal.Type.Analog")))
+plot_vardata <- as.data.frame(plot_list[plot_varnumber])
+plots_var <- ggplot(plot_vardata, aes(x=reorder(plot_vardata[,1], + n), y=n))+  
+  geom_bar(stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4, width = 0.8, position = position_dodge(width = 1)) + 
+  geom_text(aes(label=n), hjust=-0.3, size=5) + # adding label text outside the bars
+  theme_classic() + 
+  coord_flip() +
+  labs(title = paste("Figure 3: Number of cultured meat companies by animal type analog", sep = ""), x = "Animal type analog", y = "Number of cultured meat companies") +
+  theme(axis.text = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 24)) 
+plots_var 
+```
+
+#### 8. by location regions
+
+```{r}
+plot_varnumber <- which(sapply(plot_list, function(x) any(names(x) == "Location.Regions")))
+plot_vardata <- as.data.frame(plot_list[plot_varnumber])
+plots_var <- ggplot(plot_vardata, aes(x=reorder(plot_vardata[,1], + n), y=n))+  
+  geom_bar(stat="identity", size=.01, fill=temperatureColor, color="black", alpha=.4, width = 0.8, position = position_dodge(width = 1)) + 
+  geom_text(aes(label=n), hjust=-0.3, size=5) + # adding label text outside the bars
+  theme_classic() + 
+  coord_flip() +
+  labs(title = paste("Figure 3: Number of cultured meat companies by location regions", sep = ""), x = "Location regions", y = "Number of cultured meat companies") +
+  theme(axis.text = element_text(size = 16)) +
+  theme(axis.title = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 24)) 
+plots_var 
+```
+
+## interactive worldmap
+
+```{r}
+# interactive worldmap
+p <- NumberofCMInEachCountry %>%
+  ggplot() +
+  geom_polygon(data = world, aes(x=long, y = lat, group=group), fill="darkgray", alpha=0.3) +
+  geom_point(aes(x=long, y=lat, size=n, color=n, text=mytext, alpha=n) ) +
+  geom_text_repel(data=NumberofCMInEachCountry, aes(x=long, y=lat, label=country), size=5) +
+  scale_size_continuous(range=c(1,15)) +
+  scale_alpha_continuous(trans="log") +
+  theme_void() +
+  theme(legend.position = "right") +
+  labs(color='Number of cultured \nmeat companies') +
+  scale_color_gradient(limits = c(0, 60),
+                       breaks = c(10, 20, 30, 40, 50),
+                       labels = c(10, 20, 30, 40, 50),
+                       low = "#C9A204",
+                       high = priceColor)
+cm_worldmap <- ggplotly(p , tooltip="text", source = "plotmap")
+event_register(cm_worldmap, "plotly_click")
+cm_worldmap
+
+# relating table created by clicking on bubbles in worldmap
+
+# country_map <- event_data("plotly_click", source = "plotmap")
+# if (is.null(country_map)) return(NULL)
+# # Obtain the clicked x lang variables 
+# tablemap <-  data_CM_merged %>% filter(long %in% country_map) %>%
+#   select(Country, Company, Type, Protein.Category, Location.Regions, Technology.Focus, Contact.email,              
+#          Website, Company.Focus, Product.Type, Animal.Type.Analog, Ingredient.Type, Operating.Regions, State,
+#          City, Year.Founded, Founders, Parent.Company, Researcher.name, Position, Host.Institution, Research.focus, 
+#          Collaboration.opportunities)
+# datatable(tablemap,
+#           options = list(searching = FALSE,pageLength = 5,
+#                          lengthMenu = c(5, 10, 15, 20), scrollX = T),width = "600px" ,
+#           height = "800px",
+#           colnames = c("Country","Company", "Type", "Protein Category" 
+#                        ,"Location Regions" 
+#                        ,"Technology Focus", "Contact", "Website" 
+#                        ,"Company Focus", "Product Type"               
+#                        ,"Animal Type Analog", "Ingredient Type", "Operating Regions", "State", "City", "Year founded", "Founder"         
+#                        ,"Parent Company", "Researcher Name"            
+#                        ,"Position", "Host Institution", "Research focus"             
+#                        ,"Collaboration opportunities"))
+```
+
+## overall interactive treemap (without selecting the input variables like region/country)
+
+```{r}
+# function to change font size of treemap from https://zhiyang.netlify.app/post/treemap/
+style_widget <- function(hw=NULL, style="", addl_selector="") {
+  stopifnot(!is.null(hw), inherits(hw, "htmlwidget"))
+  
+  # use current id of htmlwidget if already specified
+  elementId <- hw$elementId
+  if(is.null(elementId)) {# borrow htmlwidgets unique id creator
+                          elementId <- sprintf('htmlwidget-%s',
+                                                htmlwidgets:::createWidgetId())
+                          hw$elementId <- elementId}
+  
+  htmlwidgets::prependContent(hw,
+                              htmltools::tags$style(sprintf("#%s %s {%s}",
+                                                            elementId,
+                                                            addl_selector,
+                                                            style)
+                                                    )
+                              )
+}
+
+# dataset needed to create treemap
+data_CM_VC_of_interest <- data_CM_VC %>% 
+  select(Technology.Focus_grouped, Technology.Focus, Location.Regions, Country, Company) %>%
+  full_join(y=count(data_CM_VC,Technology.Focus_grouped), "Technology.Focus_grouped")
+
+# static treemap
+    tm_country <- treemap(data_CM_VC_of_interest,index=c("Technology.Focus_grouped", "Technology.Focus", "Location.Regions", "Country", "Company"),
+                          vSize="n",
+                          vColor="Technology.Focus_grouped",
+                          type="index",
+                          title="Upstream value chain",
+                          palette = "OrRd")
+# interactive treempap
+treecountry <- style_widget(d3tree2(tm_country, rootname = "Upstream value chain", width="200%", height = "800px" ), 
+                            addl_selector="text",
+                            style="font-family: cursive; font-size: 20px;")
+print(treecountry)
+```
+
+## relating tables to treemap
+
+```{r}
+# table: #companies with a certain technology focus - world level
+data_CM_VC %>% count(Technology.Focus_grouped)
+
+# table: #companies with a certain technology focus - region level
+data_CM_VC %>% 
+  group_by(Location.Regions, Technology.Focus_grouped) %>%
+  count()
+# alternative: table(data_CM_VC$Location.Regions, data_CM_VC$Technology.Focus_grouped)
+
+# table: #companies with a certain technology focus - country level
+data_CM_VC %>% 
+  group_by(Country, Technology.Focus_grouped) %>%
+  count()
+# alternative:table(data_CM_VC$Country, data_CM_VC$Technology.Focus_grouped)
+```
